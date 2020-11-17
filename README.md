@@ -30,23 +30,28 @@ ffmpeg을 다양한 플랫폼 환경에서 쉽게 빌드하기 위해 정리한 
 * **install <a href="https://yasm.tortall.net/Download.html">yasm</a>**
 * **install <a href="http://gnuwin32.sourceforge.net/packages/coreutils.htm">coreutil-bin, coreutil-dep</a>**
 * **install <a href="https://download.gnome.org/binaries/win32">pkg-config, glib, gettext-runtime**</a>
+* 위의 tool들을 모두 설치하고, path setting을 해줄 것
+
 
 * **참고 문헌**
   * <a href="https://trac.ffmpeg.org/wiki/CompilationGuide">FFmpeg/CompliationGuide/</a>
   * <a href="https://trac.ffmpeg.org/wiki/CompilationGuide/MinGW">FFmpeg/CompliationGuide/MinGW</a>
   * <a href="http://www.mingw.org/wiki/msys">MinGW & MSYS</a>
-  * <a href="http://gnuwin32.sourceforge.net/packages/make.htm">Make</a>
-    * msys에 내장되어있는 make.exe를 사용하면 output으로 .dll이 아닌 .a가 나온다 ...
 
 ### packaging
+ * <a href="https://drive.google.com/file/d/1y0Y-LGv0OoOLG8hS-P-_I3T2eb8yswtS/view?usp=sharing">빌드환경</a>
  * packaging해둔 msys 압축파일을 [c:/]에 압축해제, ``[c:/msys]``에 위치하도록 함
-   * **``To Do: git lfs로 압축파일 업데이트``**
- * target arch에 따라 ``etc/fstab``을 변경
- * ``source .profile``
- * export to git.exe path ``export PATH=$PATH:/c/Git/cmd``
- * go to common build stage
+ * script의 ffmpeg configure scriptor에서 configure를 상황에 맞게 수정
+ * [c:/msys/1.0]에서 원하는 architecture에 맞춰 ``source [.x86_init|.x86_64_init]`` 실행
+   * 해당 커맨드는 아래와 같은 일들을 함
+   * ``mingw compilter path setting`` : target arch에 맞춰 ``/mingw``에 mount할 directory를 ``etc/fstab``을 변경
+   * ``PATH setting [PATH/PKG_CONFIG_PATH]``
+   * ffmpeg git clone & checkout & configure & make install
 
-
+### output archive
+* <a href="">windows ffmpeg build output</a>
+  * ``LGPL``
+  * ``[x86|x86_64] / [debug/release] / [default|default+sdl+openh264]``
 
 ***
 ## For Linux Builds
@@ -58,12 +63,27 @@ ffmpeg을 다양한 플랫폼 환경에서 쉽게 빌드하기 위해 정리한 
 * ``git checkout -t origin/release/4.1``
 * ``./configure``
   * 미리 만들어 둔 .sh 파일을 이용하여 쉽게 진행할 수 있다.
+* ``make`` ``make install``
 
 ***
 
 ## external library add
+* build하여 /external/[32/64] 맞는 위치에 넣어주어야 함
+  * pkgconfig .pc파일의 prefix 경로는 절대경로를 넣어주어야 함
+
+* sdl2
+  * .pc path만 잘 맞춰주면 문제없이 진행
 
 * openh264
-* sdl2
-* ... 대부분의 과정은 위와 비슷 ... ``cmake, make, configure, make``
+  * windows x86은 큰 문제없이 빌드되는 것을 확인
+  * windows x86_64의 경우, x86_64-w64-mingw32-gcc-ar.exe를 복사하여 x86_64-w64-mingw32-ar.exe를 만들어주어야 함
 
+***
+
+## 기타 이슈
+
+* sed
+  * 해당 tool이 설치되지 않을 경우, afilter 등의 일부 필터가 스크립팅되지 않아 정상적으로 빌드과정에 포함되지 않는 문제가 있어 ffplay로 재생 시 sound를 재생하지 못함.
+
+* make 실행 시, crlf/lf 충돌로 문제가 발생하는 상황이 있을 수 있음
+  * git config --global core.autocrlf false
