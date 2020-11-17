@@ -49,7 +49,7 @@ ffmpeg을 다양한 플랫폼 환경에서 쉽게 빌드하기 위해 정리한 
    * ffmpeg git clone & checkout & configure & make install
 
 ### output archive
-* <a href="">windows ffmpeg build output</a>
+* <a href="https://drive.google.com/file/d/16slDl_9gDGCCj6Vs5SkizXH-t1CBm_XL/view?usp=sharing">windows ffmpeg build output</a>
   * ``LGPL``
   * ``[x86|x86_64] / [debug/release] / [default|default+sdl+openh264]``
 
